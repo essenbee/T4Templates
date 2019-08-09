@@ -25,6 +25,8 @@ namespace T4Templates
             var default_Id = 0L;
             var default_Mission = string.Empty;
             var default_LaunchDateTime = DateTime.MinValue;
+            var default_NET = "Unknown";
+            
             using (var cmd = dbConnection.CreateCommand())
             {
                 cmd.CommandType = CommandType.Text;
@@ -37,6 +39,7 @@ namespace T4Templates
                     var ord_Id = reader.GetOrdinal("Id");
                     var ord_Mission = reader.GetOrdinal("Mission");
                     var ord_LaunchDateTime = reader.GetOrdinal("LaunchdateTime");
+                    var ord_NET = reader.GetOrdinal("NET");
 
                     while (reader.Read())
                     {
@@ -49,14 +52,16 @@ namespace T4Templates
                         }
 
                         var val_Id = (row[ord_Id] is DBNull) ? default_Id : ((long)row[ord_Id]);
-                        var val_MIssion = (row[ord_Mission] is DBNull) ? default_Mission : ((string)row[ord_Mission]);
+                        var val_Mission = (row[ord_Mission] is DBNull) ? default_Mission : ((string)row[ord_Mission]);
                         var val_LaunchDateTime = (row[ord_LaunchDateTime] is DBNull) ? default_LaunchDateTime : ((DateTime)row[ord_LaunchDateTime]);
+                        var val_NET = (row[ord_NET] is DBNull) ? default_NET : ((string)row[ord_NET]);
 
                         yield return new Launch
                         {
                             Id = val_Id,
-                            Mission = val_MIssion,
+                            Mission = val_Mission,
                             LaunchDateTime = val_LaunchDateTime,
+                            NET = val_NET,
                         };
 
                     }
@@ -77,7 +82,7 @@ namespace T4Templates
 
                 foreach (var launch in launches)
                 {
-                    Console.WriteLine($"{launch.Id}: {launch.Mission} {(launch.LaunchDateTime != DateTime.MinValue ? launch.LaunchDateTime.ToString() : "-")}");
+                    Console.WriteLine($"{launch.Id}:\t{launch.Mission}\t{(launch.LaunchDateTime != DateTime.MinValue ? launch.LaunchDateTime.ToString() : launch.NET)}");
                 }
             }
         }
