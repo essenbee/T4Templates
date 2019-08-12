@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+
+
+using System;
+using System.Text;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using DataRows;
+using System.Collections.Generic;
 
-namespace T4Templates
+namespace DataRows
 {
-    static class Program
-    {
-        struct Launch
-        {
-            public long Id;
-            public string Mission;
-            public string Rocket;
-            public DateTime LaunchDateTime;
-            public bool StageRecovery;
-            public string NET;
-            public string LaunchProvider;
-            public string LaunchSite;
-        }
 
-        static IEnumerable<Launch> ReadLaunches(this IDbConnection dbConnection, string query)
-        {
-            var default_Id = 0L;
-            var default_Mission = string.Empty;
-            var default_LaunchDateTime = DateTime.MinValue;
-            var default_NET = "Unknown";
-            
+public static partial class Reader
+{
+    public static IEnumerable<Launch2> ReadLaunch2(this IDbConnection dbConnection, string query)
+    {
+
+            long default_Id = default;
+            string default_Mission = default;
+            DateTime default_LaunchDateTime = default;
+            string default_NET = default;
+            bool default_StageRecovery = default;
+     
+           
             using (var cmd = dbConnection.CreateCommand())
             {
                 cmd.CommandType = CommandType.Text;
@@ -39,8 +31,9 @@ namespace T4Templates
 
                     var ord_Id = reader.GetOrdinal("Id");
                     var ord_Mission = reader.GetOrdinal("Mission");
-                    var ord_LaunchDateTime = reader.GetOrdinal("LaunchdateTime");
+                    var ord_LaunchDateTime = reader.GetOrdinal("LaunchDateTime");
                     var ord_NET = reader.GetOrdinal("NET");
+                    var ord_StageRecovery = reader.GetOrdinal("StageRecovery");
 
                     while (reader.Read())
                     {
@@ -56,37 +49,52 @@ namespace T4Templates
                         var val_Mission = (row[ord_Mission] is DBNull) ? default_Mission : ((string)row[ord_Mission]);
                         var val_LaunchDateTime = (row[ord_LaunchDateTime] is DBNull) ? default_LaunchDateTime : ((DateTime)row[ord_LaunchDateTime]);
                         var val_NET = (row[ord_NET] is DBNull) ? default_NET : ((string)row[ord_NET]);
-
-                        yield return new Launch
+                        var val_StageRecovery = (row[ord_StageRecovery] is DBNull) ? default_StageRecovery : ((bool)row[ord_StageRecovery]);
+                        
+                        yield return new Launch2
                         {
                             Id = val_Id,
                             Mission = val_Mission,
                             LaunchDateTime = val_LaunchDateTime,
                             NET = val_NET,
+                            StageRecovery = val_StageRecovery,
+  
                         };
 
                     }
                 }
             }
-
         }
+}
 
 
-        static void Main(string[] args)
+    public class Launch2
+    {
+        public override string ToString ()
         {
-            var connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=RocketLaunches;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            var sb = new StringBuilder ();
 
-            using (var dbConnection = new SqlConnection(connectionString))
-            {
-                dbConnection.Open();
-
-                var launches = dbConnection.ReadLaunch(@"SELECT * FROM Launch").ToArray();
-
-                foreach (var launch in launches)
-                {
-                    Console.WriteLine($"{launch}");
-                }
-            }
+            sb.Append ("{ Launch2 ");
+            sb.Append(", Id = ");
+            sb.Append(Id);
+             sb.Append(", Mission = ");
+            sb.Append(Mission);
+             sb.Append(", LaunchDateTime = ");
+            sb.Append(LaunchDateTime);
+             sb.Append(", NET = ");
+            sb.Append(NET);
+             sb.Append(", StageRecovery = ");
+            sb.Append(StageRecovery);
+            
+            sb.Append (" }");
+            
+            return sb.ToString ();
         }
+    public long Id { get; set;}
+    public string Mission { get; set;}
+    public DateTime LaunchDateTime { get; set;}
+    public string NET { get; set;}
+    public bool StageRecovery { get; set;}
     }
 }
+

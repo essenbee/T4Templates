@@ -4,9 +4,39 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+<#
+    var model  = new [] { "double", "float", "decimal" };
+#>
+
 namespace T4Templates
 {
-    public class test
+    public static partial class Test
     {
+<#
+    foreach (var tp in model)
+    {
+#>
+      public static bool IsBetween(this <#=tp#> x, <#=tp#> min, <#=tp#> max)
+      {
+        return x < min ? false : (x > max ? false : true);
+      }
+
+      public static <#=tp#> Clamp(this <#=tp#> x, <#=tp#> min, <#=tp#> max)
+      {
+        return x < min ? min : (x > max ? max :  x);
+      }
+
+      public static <#=tp#> Lerp(this <#=tp#> t, <#=tp#> a, <#=tp#> b)
+      {
+        return t.Clamp(0, 1)*(b - a) + a;
+      }
+
+      public static <#=tp#> Saturate(this <#=tp#> t)
+      {
+        return t.Clamp(0, 1);
+      }      
+<#
+    }
+#>
     }
 }

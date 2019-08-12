@@ -14,6 +14,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>test.cs</LastGenOutput>
     </None>
+    <None Update="test2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>test2.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +29,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>test.tt</DependentUpon>
+    </Compile>
+    <Compile Update="test2.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>test2.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

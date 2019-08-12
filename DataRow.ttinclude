@@ -1,0 +1,135 @@
+using System;
+using System.Text;
+using System.Data;
+using System.Collections.Generic;
+
+namespace DataRows
+{
+
+public static partial class Reader
+{
+<# 
+    foreach (var dataRow in model)
+    {
+#>
+    public static IEnumerable<<#=dataRow.Name#>> Read<#=dataRow.Name#>(this IDbConnection dbConnection, string query)
+    {
+
+<# 
+    foreach (var field in dataRow.Fields)
+    {
+#>
+            <#=field.Type#> default_<#=field.Name#> = default;
+<#
+    }
+#>     
+           
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = query;
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var fc = reader.FieldCount;
+                    var row = new object[fc];
+
+<# 
+    foreach (var field in dataRow.Fields)
+    {
+#>
+                    var ord_<#=field.Name#> = reader.GetOrdinal("<#=field.Name#>");
+<#
+    }
+#>
+
+                    while (reader.Read())
+                    {
+                        // TODO: Unnecessary boxing?
+                        // TODO: Two strategies, one for wide rows and one for narrow rows?
+                        var afc = reader.GetValues(row);
+                        if (afc != fc)
+                        {
+                            throw new Exception($"Expected {fc} fields but got {afc} fields");
+                        }
+
+<# 
+    foreach (var field in dataRow.Fields)
+    {
+#>
+                        var val_<#=field.Name#> = (row[ord_<#=field.Name#>] is DBNull) ? default_<#=field.Name#> : ((<#=field.Type#>)row[ord_<#=field.Name#>]);
+<#
+    }
+#>                        
+                        yield return new <#=dataRow.Name#>
+                        {
+<# 
+    foreach (var field in dataRow.Fields)
+    {
+#>
+                            <#=field.Name#> = val_<#=field.Name#>,
+<#
+    }
+#>  
+                        };
+
+                    }
+                }
+            }
+        }
+<#
+    }
+#>
+}
+
+
+<# 
+    foreach (var dataRow in model)
+    {
+#>
+    public class <#=dataRow.Name#>
+    {
+        public override string ToString ()
+        {
+            var sb = new StringBuilder ();
+
+            sb.Append ("{ <#=dataRow.Name#> ");
+<# 
+        foreach (var field in dataRow.Fields)
+    {
+#>
+            sb.Append(", <#=field.Name#> = ");
+            sb.Append(<#=field.Name#>);
+ <#
+    }
+#>           
+            sb.Append (" }");
+            
+            return sb.ToString ();
+        }
+<#
+    foreach (var field in dataRow.Fields)
+    {
+#>
+    public <#=field.Type#> <#=field.Name#> { get; set;}
+<#
+    }
+#>
+    }
+<#
+    }
+#>
+}
+
+<#+
+    class DataRow
+    {
+        public string   Name    ;
+        public Field[]  Fields  ;
+    }
+
+    class Field
+    {
+        public string Name;
+        public string Type;
+    }
+#>

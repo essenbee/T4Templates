@@ -1,0 +1,41 @@
+<#@ output  extension =".cs"                #>
+
+<#
+    var model = new DataRow[] 
+    {
+        new DataRow 
+        { 
+            Name = "Launch2",
+            Fields = new Field[]
+            {
+                new Field 
+                {
+                Type = "long",
+                Name = "Id",
+                },
+                new Field 
+                {
+                Type = "string",
+                Name = "Mission",
+                },
+                new Field 
+                {
+                Type = "DateTime",
+                Name = "LaunchDateTime",
+                },
+                new Field 
+                {
+                Type = "string",
+                Name = "NET",
+                },
+                new Field 
+                {
+                Type = "bool",
+                Name = "StageRecovery",
+                },
+            },
+        },
+     };
+#>
+
+<#@ include file      = "DataRow.ttinclude" #>
