@@ -4,12 +4,14 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using DataRows;
+using Launch3;
 
 namespace T4Templates
 {
     static class Program
     {
-        struct Launch
+        /*
+            struct Launch
         {
             public long Id;
             public string Mission;
@@ -70,7 +72,7 @@ namespace T4Templates
             }
 
         }
-
+        */
 
         static void Main(string[] args)
         {
@@ -80,7 +82,7 @@ namespace T4Templates
             {
                 dbConnection.Open();
 
-                var launches = dbConnection.ReadLaunch(@"SELECT * FROM Launch").ToArray();
+                var launches = dbConnection.TableScan_LaunchView().ToArray();
 
                 foreach (var launch in launches)
                 {

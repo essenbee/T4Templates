@@ -1,0 +1,130 @@
+<#@ output  extension =".cs"                #>
+
+<#@ include file      = "Schema.ttinclude" #>
+
+using System;
+using System.Text;
+using System.Data;
+using System.Collections.Generic;
+
+namespace Launch3
+{
+<#
+          var connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=RocketLaunches;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;";
+
+      using (var dbConnection = new SqlConnection (connectionString))
+      {
+        dbConnection.Open ();
+        var schema = new Schema (dbConnection);
+
+        foreach (var schemaObject in schema.SchemaObjects)
+        {
+            if (schemaObject.IsTableLike)
+            {
+#>
+    public class <#=schemaObject.Name#>
+    {
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+        public <#=column.CsTypeName #> <#=column.Name#> { get; set; }
+<#        
+        }
+#>
+        public override string ToString ()
+        {
+            var sb = new StringBuilder ();
+            sb.Append ("{ <#=schemaObject.Name#> ");
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+            sb.Append(", <#=column.Name#> = ");
+            sb.Append(<#=column.Name#>);
+<#        
+        }
+#>
+            sb.Append (" }");    
+            return sb.ToString ();
+        }   
+    }
+
+    public static partial class T4pper
+    {
+        public static IEnumerable<<#=schemaObject.Name#>> TableScan_<#=schemaObject.Name#>(
+            this IDbConnection dbConnection)
+        {
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+             <#=column.CsTypeName #> default_<#=column.Name#> = default;
+<#        
+        }
+#>
+   
+           
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = "SELECT * FROM <#=schemaObject.Name#>";
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var fc = reader.FieldCount;
+                    var row = new object[fc];
+
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+                    var ord_<#=column.Name#> = reader.GetOrdinal("<#=column.Name#>");
+<#        
+        }
+#>
+
+                    while (reader.Read())
+                    {
+                        // TODO: Unnecessary boxing?
+                        // TODO: Two strategies, one for wide rows and one for narrow rows?
+                        var afc = reader.GetValues(row);
+                        if (afc != fc)
+                        {
+                            throw new Exception($"Expected {fc} fields but got {afc} fields");
+                        }
+
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+                        var val_<#=column.Name#> = (row[ord_<#=column.Name#>] is DBNull) ? default_<#=column.Name#> : ((<#=column.CsTypeName#>)row[ord_<#=column.Name#>]);
+<#        
+        }
+#>
+
+
+                        yield return new <#=schemaObject.Name#>
+                        {
+
+<#
+        foreach (var column in schemaObject.Columns)
+        {
+#>
+                            <#=column.Name#> = val_<#=column.Name#>,
+<#        
+        }
+#>
+ 
+                        };
+
+                    }
+                }
+            }
+        }
+    }
+<#
+            }
+        }
+      }
+#>
+}

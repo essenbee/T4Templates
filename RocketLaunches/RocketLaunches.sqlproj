@@ -68,5 +68,6 @@
     <Build Include="dbo\Tables\LaunchProvider.sql" />
     <Build Include="dbo\Tables\LaunchSite.sql" />
     <Build Include="dbo\Views\LaunchView.sql" />
+    <Build Include="LaunchView.sql" />
   </ItemGroup>
 </Project>
