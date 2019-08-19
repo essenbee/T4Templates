@@ -50,9 +50,115 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<<#=schemaObject.Name#>> TableScan_<#=schemaObject.Name#>(
+<#
+        if (schemaObject.Type == SchemaObject.SchemaObjectType.Table)
+        {
+#>
+        public static void Create_<#=schemaObject.Name#>( 
+            this IDbConnection dbConnection, <#=schemaObject.Name#> rowData)
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+<#
+        foreach (var column in schemaObject.Columns.Where(c => !c.IsIdentity)) 
+        {
+#>
+                var p_<#=column.Name#> = cmd.CreateParameter (); 
+                p_<#=column.Name#>.ParameterName = "<#=column.Name#>";
+                p_<#=column.Name#>.Value = rowData.<#=column.Name#>;
+                p_<#=column.Name#>.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_<#=column.Name#>);
+
+<#        
+        }
+#> 
+
+<#
+        var pl = new StringBuilder ();
+        var vl = new StringBuilder ();
+        foreach (var column in schemaObject.Columns.Where(c => !c.IsIdentity)) 
+        {
+            if (pl.Length > 0)
+            {
+                pl.Append(", ");
+                vl.Append(", ");
+            }
+
+            pl.Append(column.Name);
+            vl.Append('@').Append(column.Name);
+        }
+#>
+
+                cmd.CommandText = "INSERT Launch(<#=pl#>) VALUES(<#=vl#>)";
+                cmd.ExecuteNonQuery();
+                }
+        }
+
+<#
+        }
+#>
+
+<#
+        if (schemaObject.Type == SchemaObject.SchemaObjectType.Table)
+        {
+#>
+        public static void Delete_<#=schemaObject.Name#>( 
+            this IDbConnection dbConnection
+<#
+        foreach (var column in schemaObject.Columns.Where(c => c.IsIdentity))
+        {
+#>
+            , <#=column.CsTypeName #> val_<#=column.Name#> 
+<#        
+        }
+#>            
+            )
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+<#
+        foreach (var column in schemaObject.Columns.Where(c => c.IsIdentity)) 
+        {
+#>
+                var p_<#=column.Name#> = cmd.CreateParameter ();
+                p_<#=column.Name#>.ParameterName = "<#=column.Name#>";
+                p_<#=column.Name#>.Value = val_<#=column.Name#>;
+                p_<#=column.Name#>.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_<#=column.Name#>);
+
+<#        
+        }
+#> 
+
+<#
+        var sb = new StringBuilder ();
+        foreach (var column in schemaObject.Columns.Where(c => c.IsIdentity)) 
+        {
+            if (sb.Length > 0)
+            {
+                sb.Append(" AND ");
+            }
+
+            sb
+                .Append(column.Name)
+                .Append(" = @")
+                .Append(column.Name);
+        }
+#>
+
+                cmd.CommandText = "DELETE FROM <#=schemaObject.Name#> WHERE <#=sb#>";
+                cmd.ExecuteNonQuery();
+            }
+        }
+<#
+        }
+#>
+
+        public static IEnumerable<<#=schemaObject.Name#>> TableScan_<#=schemaObject.Name#>( 
             this IDbConnection dbConnection)
         {
 <#

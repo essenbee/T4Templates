@@ -49,9 +49,11 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<LaunchView> TableScan_LaunchView(
+
+
+        public static IEnumerable<LaunchView> TableScan_LaunchView( 
             this IDbConnection dbConnection)
         {
              System.Int32 default_Id = default;
@@ -160,9 +162,89 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<Launch> TableScan_Launch(
+        public static void Create_Launch( 
+            this IDbConnection dbConnection, Launch rowData)
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Mission = cmd.CreateParameter (); 
+                p_Mission.ParameterName = "Mission";
+                p_Mission.Value = rowData.Mission;
+                p_Mission.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Mission);
+
+                var p_LaunchProvider = cmd.CreateParameter (); 
+                p_LaunchProvider.ParameterName = "LaunchProvider";
+                p_LaunchProvider.Value = rowData.LaunchProvider;
+                p_LaunchProvider.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_LaunchProvider);
+
+                var p_Rocket = cmd.CreateParameter (); 
+                p_Rocket.ParameterName = "Rocket";
+                p_Rocket.Value = rowData.Rocket;
+                p_Rocket.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Rocket);
+
+                var p_LaunchSite = cmd.CreateParameter (); 
+                p_LaunchSite.ParameterName = "LaunchSite";
+                p_LaunchSite.Value = rowData.LaunchSite;
+                p_LaunchSite.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_LaunchSite);
+
+                var p_NET = cmd.CreateParameter (); 
+                p_NET.ParameterName = "NET";
+                p_NET.Value = rowData.NET;
+                p_NET.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_NET);
+
+                var p_StageRecovery = cmd.CreateParameter (); 
+                p_StageRecovery.ParameterName = "StageRecovery";
+                p_StageRecovery.Value = rowData.StageRecovery;
+                p_StageRecovery.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_StageRecovery);
+
+                var p_LaunchdateTime = cmd.CreateParameter (); 
+                p_LaunchdateTime.ParameterName = "LaunchdateTime";
+                p_LaunchdateTime.Value = rowData.LaunchdateTime;
+                p_LaunchdateTime.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_LaunchdateTime);
+
+ 
+
+
+                cmd.CommandText = "INSERT Launch(Mission, LaunchProvider, Rocket, LaunchSite, NET, StageRecovery, LaunchdateTime) VALUES(@Mission, @LaunchProvider, @Rocket, @LaunchSite, @NET, @StageRecovery, @LaunchdateTime)";
+                cmd.ExecuteNonQuery();
+                }
+        }
+
+
+        public static void Delete_Launch( 
+            this IDbConnection dbConnection
+            , System.Int64 val_Id 
+            
+            )
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Id = cmd.CreateParameter ();
+                p_Id.ParameterName = "Id";
+                p_Id.Value = val_Id;
+                p_Id.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Id);
+
+ 
+
+
+                cmd.CommandText = "DELETE FROM Launch WHERE Id = @Id";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<Launch> TableScan_Launch( 
             this IDbConnection dbConnection)
         {
              System.Int64 default_Id = default;
@@ -249,9 +331,53 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<Rocket> TableScan_Rocket(
+        public static void Create_Rocket( 
+            this IDbConnection dbConnection, Rocket rowData)
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Name = cmd.CreateParameter (); 
+                p_Name.ParameterName = "Name";
+                p_Name.Value = rowData.Name;
+                p_Name.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Name);
+
+ 
+
+
+                cmd.CommandText = "INSERT Launch(Name) VALUES(@Name)";
+                cmd.ExecuteNonQuery();
+                }
+        }
+
+
+        public static void Delete_Rocket( 
+            this IDbConnection dbConnection
+            , System.Int64 val_Id 
+            
+            )
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Id = cmd.CreateParameter ();
+                p_Id.ParameterName = "Id";
+                p_Id.Value = val_Id;
+                p_Id.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Id);
+
+ 
+
+
+                cmd.CommandText = "DELETE FROM Rocket WHERE Id = @Id";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<Rocket> TableScan_Rocket( 
             this IDbConnection dbConnection)
         {
              System.Int64 default_Id = default;
@@ -317,9 +443,59 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<LaunchProvider> TableScan_LaunchProvider(
+        public static void Create_LaunchProvider( 
+            this IDbConnection dbConnection, LaunchProvider rowData)
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Name = cmd.CreateParameter (); 
+                p_Name.ParameterName = "Name";
+                p_Name.Value = rowData.Name;
+                p_Name.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Name);
+
+                var p_Country = cmd.CreateParameter (); 
+                p_Country.ParameterName = "Country";
+                p_Country.Value = rowData.Country;
+                p_Country.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Country);
+
+ 
+
+
+                cmd.CommandText = "INSERT Launch(Name, Country) VALUES(@Name, @Country)";
+                cmd.ExecuteNonQuery();
+                }
+        }
+
+
+        public static void Delete_LaunchProvider( 
+            this IDbConnection dbConnection
+            , System.Int64 val_Id 
+            
+            )
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Id = cmd.CreateParameter ();
+                p_Id.ParameterName = "Id";
+                p_Id.Value = val_Id;
+                p_Id.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Id);
+
+ 
+
+
+                cmd.CommandText = "DELETE FROM LaunchProvider WHERE Id = @Id";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<LaunchProvider> TableScan_LaunchProvider( 
             this IDbConnection dbConnection)
         {
              System.Int64 default_Id = default;
@@ -389,9 +565,59 @@ namespace Launch3
         }   
     }
 
-    public static partial class T4pper
+    public static partial class T4pper 
     {
-        public static IEnumerable<LaunchSite> TableScan_LaunchSite(
+        public static void Create_LaunchSite( 
+            this IDbConnection dbConnection, LaunchSite rowData)
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Pad = cmd.CreateParameter (); 
+                p_Pad.ParameterName = "Pad";
+                p_Pad.Value = rowData.Pad;
+                p_Pad.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Pad);
+
+                var p_Location = cmd.CreateParameter (); 
+                p_Location.ParameterName = "Location";
+                p_Location.Value = rowData.Location;
+                p_Location.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Location);
+
+ 
+
+
+                cmd.CommandText = "INSERT Launch(Pad, Location) VALUES(@Pad, @Location)";
+                cmd.ExecuteNonQuery();
+                }
+        }
+
+
+        public static void Delete_LaunchSite( 
+            this IDbConnection dbConnection
+            , System.Int64 val_Id 
+            
+            )
+        {
+            using (var cmd = dbConnection.CreateCommand())
+            {
+                cmd.CommandType = CommandType.Text;
+                var p_Id = cmd.CreateParameter ();
+                p_Id.ParameterName = "Id";
+                p_Id.Value = val_Id;
+                p_Id.Direction = ParameterDirection.Input; 
+                cmd.Parameters.Add(p_Id);
+
+ 
+
+
+                cmd.CommandText = "DELETE FROM LaunchSite WHERE Id = @Id";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static IEnumerable<LaunchSite> TableScan_LaunchSite( 
             this IDbConnection dbConnection)
         {
              System.Int64 default_Id = default;

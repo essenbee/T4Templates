@@ -82,7 +82,7 @@ namespace T4Templates
             {
                 dbConnection.Open();
 
-                var launches = dbConnection.TableScan_LaunchView().ToArray();
+                var launches = dbConnection.TableScan_Launch().ToArray();
 
                 foreach (var launch in launches)
                 {
